@@ -1,0 +1,7 @@
+# ensure dotfiles "bin.local" directory is loaded first
+PATH="$HOME/.bin.local:$PATH"
+
+# homebrew
+PATH="/usr/local/bin:$PATH"
+
+export -U PATH

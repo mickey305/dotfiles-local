@@ -1,0 +1,4 @@
+#!/bin/sh
+
+jdkenv use `jdkenv list | peco`
+jdkenv version

@@ -1,0 +1,8 @@
+[user]
+  name = K.Misaki
+  email = pro.mickey.12091it@gmail.com
+[alias]
+  sb = show-branch --all --color
+  st = status
+  b = branch
+
