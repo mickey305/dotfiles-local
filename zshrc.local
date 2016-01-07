@@ -1,7 +1,29 @@
 # ensure dotfiles "bin.local" directory is loaded first
 PATH="$HOME/.bin.local:$PATH"
 
-# homebrew
-PATH="/usr/local/bin:$PATH"
+darwin_env() {
+  #echo "import mac env"
+
+  # homebrew
+  PATH="/usr/local/bin:$PATH"
+}
+
+linux_env() {
+  #echo "import linux env"
+
+  # linuxbrew
+  export LINUXBREW_HOME_PATH="$HOME/.linuxbrew"
+  if [ -d "${LINUXBREW_HOME_PATH}" ]; then
+    PATH="$LINUXBREW_HOME_PATH/bin:$PATH"
+    export MANPATH="$LINUXBREW_HOME_PATH/share/man:$MANPATH"
+    export INFOPATH="$LINUXBREW_HOME_PATH/share/info:$INFOPATH"
+    export LD_LIBRARY_PATH="$LINUXBREW_HOME_PATH/lib:$LD_LIBRARY_PATH"
+  fi
+}
+
+case ${OSTYPE} in
+darwin*) darwin_env ;;
+linux*)  linux_env ;;
+esac
 
 export -U PATH
