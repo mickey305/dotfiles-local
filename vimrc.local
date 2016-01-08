@@ -1,0 +1,8 @@
+:syntax on
+
+set tabstop=2
+set number
+set smartindent
+set ruler
+set showmode
+set showmatch
