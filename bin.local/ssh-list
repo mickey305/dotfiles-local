@@ -1,0 +1,15 @@
+#!/bin/sh
+#
+# Author - http://d.hatena.ne.jp/youhey/20110112/1294830362
+#
+SSH_CONFIG=$HOME/.ssh/config
+
+#echo "known hosts:"
+
+if test -f $SSH_CONFIG; then
+  for i in `grep "^Host " $SSH_CONFIG | sed s/"^Host "// | grep -v "^\*$"`
+  do
+    echo "${i}"
+  done
+fi
+

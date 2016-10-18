@@ -1,0 +1,46 @@
+#!/bin/sh
+
+TARGET_CONF_FILE="$HOME/.etc.local/.pf.conf"
+DEFAULT_CONF_FILE="/etc/pf.conf"
+SECURE_CONF_FILE="$HOME/.etc.local/.pf_secure.conf"
+STATUS_CONF_FILE="$HOME/.etc.local/.chpf_status.conf"
+
+if [ $# -ne 1 ]; then
+  echo "Stopped Script: please input 1 argument" 1>&2
+  exit 1
+fi
+
+function setPacketFilter() {
+  sudo echo "linked $2 -> $1"
+  sudo ln -sf $1 $2
+  sudo pfctl -f $2
+  sudo pfctl -sr
+}
+
+function setStatusInfo() {
+  echo $1 > $STATUS_CONF_FILE
+}
+
+case $1 in
+  "default" | "def")
+    echo "********** set the apple-default firewall **********"
+    setPacketFilter $DEFAULT_CONF_FILE $TARGET_CONF_FILE
+    setStatusInfo "default"
+    echo ""
+    ;;
+  "secure" | "sec")
+    echo "********** set the cutomized secure firewall **********"
+    setPacketFilter $SECURE_CONF_FILE $TARGET_CONF_FILE
+    setStatusInfo "secure"
+    echo ""
+    ;;
+  "--status" | "-status")
+    echo "firewall status is [`cat $STATUS_CONF_FILE`]"
+    echo ""
+    ;;
+  *)
+    echo "Stopped Script: argument (default|secure|--status)" 1>&2
+    echo ""
+    exit 1
+    ;;
+esac

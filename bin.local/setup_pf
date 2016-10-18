@@ -1,0 +1,4 @@
+#!/bin/sh
+
+PfStatus=`cat $HOME/.etc.local/.chpf_status.conf`
+chpf $PfStatus
