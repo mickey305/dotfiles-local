@@ -3,7 +3,7 @@ PATH="$HOME/.bin.local:$PATH"
 
 # read my alias file
 if [ -f $HOME/.aliases.local ]; then
-	. $HOME/.aliases.local
+  . $HOME/.aliases.local
 fi
 
 # Perl Environment
