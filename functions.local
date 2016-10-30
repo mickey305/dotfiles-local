@@ -19,7 +19,7 @@ function cpulimit() {
 		local have_limit_arg=$(echo "$@" | awk '{
 			for (i = 1; i <= NF; i++) {
 				if ($i == "-l" || $i == "--l" || $i == "--limit" || match ($i, /^--(l|limit)?=[0-9]+$/)) {
-							flag=1; break;
+					flag=1; break;
 				}
 			}
 			print flag
