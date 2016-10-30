@@ -1,5 +1,12 @@
+TAG204656="zshrc.local"
+
 # ensure dotfiles "bin.local" directory is loaded first
 PATH="$HOME/.bin.local:$PATH"
+
+# read my functions file
+if [ -f $HOME/.functions.local ]; then
+  . $HOME/.functions.local
+fi
 
 # read my alias file
 if [ -f $HOME/.aliases.local ]; then
@@ -36,6 +43,18 @@ PATH=$PATH:$HOME/.nodebrew/current/bin
 darwin_env() {
   #echo "import mac env"
 
+  PATH="$HOME/.bin.local/.darwin:$PATH"
+
+  # read my functions file
+  if [ -f $HOME/.functions_darwin.local ]; then
+    . $HOME/.functions_darwin.local
+  fi
+
+  # read my alias file
+  if [ -f $HOME/.aliases_darwin.local ]; then
+    . $HOME/.aliases_darwin.local
+  fi
+
   # homebrew
   PATH="/usr/local/bin:$PATH"
 
@@ -59,6 +78,18 @@ darwin_env() {
 
 linux_env() {
   #echo "import linux env"
+
+  PATH="$HOME/.bin.local/.linux:$PATH"
+
+  # read my functions file
+  if [ -f $HOME/.functions_linux.local ]; then
+    . $HOME/.functions_linux.local
+  fi
+
+  # read my alias file
+  if [ -f $HOME/.aliases_linux.local ]; then
+    . $HOME/.aliases_linux.local
+  fi
 
   # linuxbrew
   export LINUXBREW_HOME_PATH="$HOME/.linuxbrew"

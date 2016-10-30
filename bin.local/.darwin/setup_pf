@@ -1,0 +1,8 @@
+#!/bin/sh
+
+STATUS_CONF_FILE="$HOME/.etc.local/.chpf_status.conf"
+
+if [ -f $STATUS_CONF_FILE ]; then
+  PfStatus=`cat $STATUS_CONF_FILE`
+  chpf $PfStatus
+fi

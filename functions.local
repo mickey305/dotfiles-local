@@ -1,0 +1,107 @@
+#!/bin/bash
+
+TAG204556="functions.local"
+
+CPULIMIT=$(which cpulimit)
+PS=$(which ps)
+GREP=$(which grep)
+
+function ps() {
+	$PS $@
+}
+
+function grep() {
+	$GREP $@
+}
+
+function cpulimit() {
+	if [ ! $# -eq 0 ]; then
+		local have_limit_arg=$(echo "$@" | awk '{
+			for (i = 1; i <= NF; i++) {
+				if ($i == "-l" || $i == "--l" || $i == "--limit" || match ($i, /^--(l|limit)?=[0-9]+$/)) {
+							flag=1; break;
+				}
+			}
+			print flag
+		}')
+	fi
+	if [ "$have_limit_arg" ]; then
+		local pid=$(echo "$@" | awk '{
+			for (i = 1; i <= NF; i++) {
+				if ($i == "-p" || $i == "--p" || $i == "--pid") { out=$(i + 1); break; }
+				if (match ($i, /^--pid=[0-9]+$/)) { out=substr($i, 7); break; }
+				if (match ($i, /^--p=[0-9]+$/)) { out=substr($i, 5); break; }
+			}
+			print out
+		}')
+		if [ "$pid" ]; then
+			local cpulimit_ps_list=$(cpulimit-list)
+			if [ "$cpulimit_ps_list" ]; then
+				echo "$cpulimit_ps_list" | while read cpulimit_ps; do
+					local limitting_pid=$(echo "$cpulimit_ps" | awk '{
+						for (i = 6; i <= NF; i++) {
+							if ($i == "-p" || $i == "--p" || $i == "--pid") { out=$(i + 1); break; }
+							if (match ($i, /^--pid=[0-9]+$/)) { out=substr($i, 7); break; }
+							if (match ($i, /^--p=[0-9]+$/)) { out=substr($i, 5); break; }
+						}
+						print out
+					}')
+					if [ "$pid" == "$limitting_pid" ]; then
+						# running cpulimit process kill
+						sudo kill $(echo "$cpulimit_ps" | awk '{ print $1 }')
+					fi
+				done
+			fi
+		fi
+		# cpulimit process execute background
+		sudo -b $CPULIMIT $@ 1>/dev/null 2>/dev/null
+	else
+		$CPULIMIT $@
+	fi
+}
+
+function cpulimit-list() {
+	local ps_list=$(ps ax | grep cpulimit | grep -v grep | grep -v sudo)
+	if [ "$ps_list" ]; then
+		# running cpulimit processes prot
+		echo "$(ps ax | head -n 1) [LIMITING PROCESS PATH]"
+		echo "$ps_list" | while read ps; do
+			local pid=$(echo "$ps" | awk '{
+				for (i = 6; i <= NF; i++) {
+					if ($i == "-p" || $i == "--p" || $i == "--pid") { out=$(i + 1); break; }
+					if (match ($i, /^--pid=[0-9]+$/)) { out=substr($i, 7); break; }
+					if (match ($i, /^--p=[0-9]+$/)) { out=substr($i, 5); break; }
+				}
+				print out
+			}')
+			if [ "$pid" ]; then
+				local regex=$(echo "^\s*$pid\s\{1,\}")
+				local process_path=$(ps ax | grep "$regex" | grep -v grep | awk '{
+					for (i = 5; i < NF; i++) { printf("%s%s", $i, OFS=" "); }
+					print $NF
+				}')
+				echo "$ps [$process_path]"
+			else
+				echo "$ps"
+			fi
+		done
+	fi
+}
+
+function cpulimit-free() {
+	local result=$(cpulimit-list | tail -r | sed -e '$d' | awk '{ print $1; }')
+	if [ "$result" ]; then
+		# kill all running cpulimit processes
+		sudo kill $result
+	fi
+}
+
+function killjobs () {
+	if [ "$(jobs -p)" ]; then
+		sudo kill $(jobs -p)
+	fi
+}
+
+function chkstatus() {
+	if [ ! $? -eq 0 ]; then exit $?; fi
+}
