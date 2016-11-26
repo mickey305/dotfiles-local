@@ -1,3 +1,4 @@
+#!/bin/bash
 TAG204350="aliases_darwin.local"
 
 alias xcode="/Applications/Xcode.app/Contents/MacOS/Xcode"

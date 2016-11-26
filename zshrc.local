@@ -1,3 +1,4 @@
+#!/bin/bash
 TAG204656="zshrc.local"
 
 # ensure dotfiles "bin.local" directory is loaded first
