@@ -75,6 +75,9 @@ darwin_env() {
   export GOROOT=/usr/local/opt/go/libexec
   export GOPATH=$HOME/workspace/golang
   PATH=$PATH:$GOPATH/bin:$GOROOT/bin
+
+  # add openssl path(by homebrew)
+  export PATH=/usr/local/opt/openssl/bin:$PATH
 }
 
 linux_env() {
